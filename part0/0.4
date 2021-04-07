@@ -1,0 +1,18 @@
+Browser->Server POST https://studies.cs.helsinki.fi/exampleapp/new_note
+Server-->Browser location: /exampleapp/notes
+
+note:
+	Html form sends data to server. Then server responds with redirect to notes-pageand it starts to run in the browser.
+
+Browser->Server GET https://studies.cs.helsinki.fi/exampleapp/notes
+Server-->Browser html-code
+Browser->Server GET https://studies.cs.helsinki.fi/exampleapp/main.css
+Server-->Browser css-code
+Browser->Server GET https://studies.cs.helsinki.fi/exampleapp/main.js
+Server-->Browser JavaScript-code
+
+note: Browser starts running the JavaScript code.
+
+Browser->Server GET https://studies.cs.helsinki.fi/exampleapp/data.json
+Server-->Browser json data.
+
