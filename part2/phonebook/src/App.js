@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Number = (props) => {
 	const { person, pattern } = props;
@@ -13,15 +14,15 @@ const Number = (props) => {
 const Numbers = (props) => {
 	const { persons, filter } = props;
 	const pattern = RegExp("(^.* |^)" + filter, "i");
+	if (persons.lenght === 0) {
+		console.log("Initial list empty");
+		return "";
+	}
 	return (
 		<>
 			{persons.map((person, i) => {
 				return (
-					<Number
-						pattern={pattern}
-						key={person.name + toString(i)}
-						person={person}
-					/>
+					<Number pattern={pattern} key={person.id} person={person} />
 				);
 			})}
 		</>
@@ -67,7 +68,11 @@ const Filter = (props) => {
 	return (
 		<>
 			<div>filter shown with </div>
-			<form>
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+				}}
+			>
 				<input
 					value={filter}
 					onChange={(e) => {
@@ -80,16 +85,30 @@ const Filter = (props) => {
 };
 
 const App = () => {
-	const [persons, setPersons] = useState([
-		{ name: "Arto Hellas", number: "040-123456" },
-		{ name: "Ada Lovelace", number: "39-44-5323523" },
-		{ name: "Dan Abramov", number: "12-43-234345" },
-		{ name: "Mary Poppendieck", number: "39-23-6423122" },
-	]);
+	const [persons, setPersons] = useState([]);
 	const [newName, setNewName] = useState("");
 	const [newNumber, setNewNumber] = useState("");
 	const [filter, setFilter] = useState("");
 
+	const getDataHook = () => {
+		axios
+			.get("http://localhost:3001/persons")
+			.then((res) => {
+				//console.log(res);
+				setPersons(res.data);
+			})
+			.catch((e) => {
+				console.log(e);
+			});
+	};
+	useEffect(getDataHook, []);
+	const findMaxId = () => {
+		let biggest = 0;
+		persons.forEach((person) => {
+			if (person.id > biggest) biggest = person.id;
+		});
+		return biggest;
+	};
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		if (!newNumber || !newName) {
@@ -107,7 +126,11 @@ const App = () => {
 			alert(`${newName} is already added to phonebook`);
 			return;
 		}
-		const newPerson = { name: newName, number: newNumber };
+		const newPerson = {
+			name: newName,
+			number: newNumber,
+			id: findMaxId() + 1,
+		};
 		const newArray = [...persons];
 		newArray.push(newPerson);
 		setPersons(newArray);
