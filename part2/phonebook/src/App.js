@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import backEnd from "./Backend";
 
 const Number = (props) => {
-	const { person, pattern } = props;
+	const { person, pattern, deleteNumber } = props;
 	if (!pattern.test(person.name)) return "";
 	return (
 		<p>
-			{person.name} {person.number}
+			{person.name} {person.number}{" "}
+			<button onClick={() => deleteNumber(person)}>delete</button>
 		</p>
 	);
 };
 
 const Numbers = (props) => {
-	const { persons, filter } = props;
+	const { persons, filter, deleteNumber } = props;
 	const pattern = RegExp("(^.* |^)" + filter, "i");
-	if (persons.lenght === 0) {
+	if (!persons) return null;
+	if (persons.length === 0) {
 		console.log("Initial list empty");
 		return "";
 	}
@@ -22,7 +25,12 @@ const Numbers = (props) => {
 		<>
 			{persons.map((person, i) => {
 				return (
-					<Number pattern={pattern} key={person.id} person={person} />
+					<Number
+						pattern={pattern}
+						key={person.id}
+						person={person}
+						deleteNumber={(arg) => deleteNumber(arg)}
+					/>
 				);
 			})}
 		</>
@@ -102,13 +110,40 @@ const App = () => {
 			});
 	};
 	useEffect(getDataHook, []);
-	const findMaxId = () => {
-		let biggest = 0;
-		persons.forEach((person) => {
-			if (person.id > biggest) biggest = person.id;
-		});
-		return biggest;
+
+	const updateNumber = (person) => {
+		if (
+			!window.confirm(
+				`${person.name} is already added to phonebook, replace the old number with new one?`
+			)
+		)
+			return;
+		const newObject = { ...person, number: newNumber };
+		backEnd.updateNumber(newObject);
+		const newPersons = [...persons];
+		const currentPerson = newPersons.find((p) => p.id === person.id);
+		currentPerson.number = newObject.number;
+		//const newPersons = persons.filter((p) => p.id !== person.id);
+		setPersons(newPersons);
 	};
+
+	const addNumber = () => {
+		const findMaxId = () => {
+			let biggest = 0;
+			persons.forEach((person) => {
+				if (person.id > biggest) biggest = person.id;
+			});
+			return biggest;
+		};
+		const newPerson = {
+			name: newName,
+			number: newNumber,
+			id: findMaxId() + 1,
+		};
+		backEnd.addNumber(newPerson);
+		setPersons(persons.concat(newPerson));
+	};
+
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		if (!newNumber || !newName) {
@@ -122,22 +157,20 @@ const App = () => {
 		const checkName = persons.find((person) => {
 			return person.name === newName;
 		});
-		if (checkName) {
-			alert(`${newName} is already added to phonebook`);
-			return;
-		}
-		const newPerson = {
-			name: newName,
-			number: newNumber,
-			id: findMaxId() + 1,
-		};
-		const newArray = [...persons];
-		newArray.push(newPerson);
-		setPersons(newArray);
+		if (checkName) updateNumber(checkName);
+		else addNumber();
 		setNewName("");
 		setNewNumber("");
 	};
 
+	const deleteNumber = (person) => {
+		if (window.confirm(`Delete ${person.name}?`) === false) return;
+		backEnd.deleteNumber(person);
+		const newPersons = persons.filter((p) => {
+			return p.id !== person.id;
+		});
+		setPersons(newPersons);
+	};
 	return (
 		<div>
 			<h2>Phonebook</h2>
@@ -156,7 +189,13 @@ const App = () => {
 				handleSubmit={(e) => handleSubmit(e)}
 			/>
 			<h3>Numbers</h3>
-			<Numbers persons={persons} filter={filter} />
+			<Numbers
+				persons={persons}
+				filter={filter}
+				deleteNumber={(arg) => {
+					deleteNumber(arg);
+				}}
+			/>
 		</div>
 	);
 };
