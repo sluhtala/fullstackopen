@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import "./index.css";
 import axios from "axios";
-import backEnd from "./Backend";
+import backEnd from "./backend";
+import Notification from "./Notification";
 
 const Number = (props) => {
 	const { person, pattern, deleteNumber } = props;
@@ -18,7 +20,6 @@ const Numbers = (props) => {
 	const pattern = RegExp("(^.* |^)" + filter, "i");
 	if (!persons) return null;
 	if (persons.length === 0) {
-		console.log("Initial list empty");
 		return "";
 	}
 	return (
@@ -97,12 +98,13 @@ const App = () => {
 	const [newName, setNewName] = useState("");
 	const [newNumber, setNewNumber] = useState("");
 	const [filter, setFilter] = useState("");
+	const [notification, setNotification] = useState(null);
+	const [useError, setUseError] = useState(false);
 
 	const getDataHook = () => {
 		axios
 			.get("http://localhost:3001/persons")
 			.then((res) => {
-				//console.log(res);
 				setPersons(res.data);
 			})
 			.catch((e) => {
@@ -119,12 +121,17 @@ const App = () => {
 		)
 			return;
 		const newObject = { ...person, number: newNumber };
-		backEnd.updateNumber(newObject);
-		const newPersons = [...persons];
-		const currentPerson = newPersons.find((p) => p.id === person.id);
-		currentPerson.number = newObject.number;
-		//const newPersons = persons.filter((p) => p.id !== person.id);
-		setPersons(newPersons);
+		backEnd.updateNumber(newObject).then((result) => {
+			console.log(result);
+			const newPersons = [...persons];
+			const currentPerson = newPersons.find((p) => p.id === person.id);
+			currentPerson.number = newObject.number;
+			setPersons(newPersons);
+			setNotification(`Number of ${currentPerson.name} updated`);
+			setTimeout(() => {
+				setNotification(null);
+			}, 4000);
+		});
 	};
 
 	const addNumber = () => {
@@ -140,8 +147,18 @@ const App = () => {
 			number: newNumber,
 			id: findMaxId() + 1,
 		};
-		backEnd.addNumber(newPerson);
-		setPersons(persons.concat(newPerson));
+		backEnd
+			.addNumber(newPerson)
+			.then(() => {
+				setPersons(persons.concat(newPerson));
+				setNotification(`${newPerson.name} added`);
+				setTimeout(() => {
+					setNotification(null);
+				}, 6000);
+			})
+			.catch((e) => {
+				console.log(e);
+			});
 	};
 
 	const handleSubmit = (event) => {
@@ -165,7 +182,20 @@ const App = () => {
 
 	const deleteNumber = (person) => {
 		if (window.confirm(`Delete ${person.name}?`) === false) return;
-		backEnd.deleteNumber(person);
+		backEnd
+			.deleteNumber(person)
+			.then((result) => console.log(result))
+			.catch((e) => {
+				console.log(e);
+				setUseError(true);
+				setNotification(
+					`Information of ${person.name} has already removed from the server`
+				);
+				setTimeout(() => {
+					setNotification(null);
+					setUseError(false);
+				}, 5000);
+			});
 		const newPersons = persons.filter((p) => {
 			return p.id !== person.id;
 		});
@@ -174,6 +204,7 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
+			<Notification notification={notification} error={useError} />
 			<Filter
 				filter={filter}
 				setFilter={(arg) => {

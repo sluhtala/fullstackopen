@@ -1,29 +1,22 @@
 import axios from "axios";
-const url = "http://localhost:3001/persons";
 
-const addNumber = (person) => {
-	axios
-		.post(url, person)
-		.then((result) => {
-			console.log(result);
-			console.log("new number added");
-		})
-		.catch((e) => {
-			console.log(e);
-		});
+const baseURL = "http://localhost:3001/persons";
+
+const backEnd = {
+	addNumber: (person) => {
+		const request = axios.post(baseURL, person);
+		return request.then((respond) => respond.data);
+	},
+
+	deleteNumber: (person) => {
+		const request = axios.delete(`${baseURL}/${person.id}`);
+		return request.then((respond) => respond.data);
+	},
+
+	updateNumber: (person) => {
+		const request = axios.put(`${baseURL}/${person.id}`, person);
+		return request.then((respond) => respond.data);
+	},
 };
 
-const deleteNumber = (person) => {
-	axios.delete(`${url}/${person.id}`).then((result) => {
-		console.log(result);
-	});
-};
-
-const updateNumber = (person) => {
-	axios.put(`${url}/${person.id}`, person).then((result) => {
-		console.log(result);
-		console.log(person.name + "'s number updated");
-	});
-};
-
-export default { addNumber, deleteNumber, updateNumber };
+export default backEnd;
