@@ -135,6 +135,7 @@ const App = () => {
 	};
 
 	const addNumber = () => {
+		/*
 		const findMaxId = () => {
 			let biggest = 0;
 			persons.forEach((person) => {
@@ -142,6 +143,7 @@ const App = () => {
 			});
 			return biggest;
 		};
+		*/
 		const newPerson = {
 			name: newName,
 			number: newNumber,
@@ -157,12 +159,19 @@ const App = () => {
 				}, 6000);
 			})
 			.catch((e) => {
+				setNotification(e.response.data.error);
+				setUseError(true);
+				setTimeout(() => {
+					setNotification(null);
+					setUseError(false);
+				}, 6000);
 				console.log(e);
 			});
 	};
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
+		/*
 		if (!newNumber || !newName) {
 			console.log("Fill both fields");
 			return;
@@ -171,6 +180,7 @@ const App = () => {
 			console.log("Not a valid number");
 			return;
 		}
+		*/
 		const checkName = persons.find((person) => {
 			return person.name === newName;
 		});
