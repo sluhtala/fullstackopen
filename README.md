@@ -1,3 +1,3 @@
 # fullstackopen
 My submissions to fullstackopen -course at 
-https://fullstackopen.com
+https://fullstackopen.com/en
