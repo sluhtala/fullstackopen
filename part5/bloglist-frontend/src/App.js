@@ -1,43 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
-import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import loginService from './services/login'
-
-const Notification = ({message, error}) =>
-{
-  if (!message)
-    return null;
-  return (
-      <h2 className={
-        error ? 'notification error'
-        : 'notification'
-      }>{message}</h2>
-  );
-}
-
-const Blogs = ({user})=>{
-  const [blogs, setBlogs] = useState([])
-
-  useEffect(() => {
-    if(!user)
-      return ;
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
-  }, [user])
-
-  if (!user)
-    return (null);
-  return (
-    <>
-      <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
-     </>
-  );
-}
+import Notification from './components/Notification'
+import Blogs from './components/Blogs'
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -52,12 +17,12 @@ const App = () => {
     try{
       const userReturned = await loginService.login({username: username, password: password });
       setUser(userReturned);
-      console.log(userReturned);
+      sessionStorage.setItem('user-logged', JSON.stringify(userReturned));
       setUsername('');
       setPassword('');
     }
     catch (e){
-      setNotification('Wrong credentials');
+      setNotification('Wrong username or password');
       setUseError(true);
       setTimeout(()=>{
         setNotification(null);
@@ -66,10 +31,26 @@ const App = () => {
     }
   }
 
+
+  useEffect(()=>{
+    const sessionUser = sessionStorage.getItem('user-logged');
+    if (sessionUser)
+    {
+      console.log('sessionuser found');
+      const userRemembered = JSON.parse(sessionUser);
+      setUser(userRemembered);
+    }
+  },[]);
+
   return (
     <div>
       <Notification message={notification} error={useError}/>
-      <Blogs user={user}/>
+      <Blogs
+      user={user}
+      setUser={(arg)=>{setUser(arg)}}
+      setNotification={(arg)=>setNotification(arg)}
+      setError={(arg)=>setUseError(arg)}
+      />
       <LoginForm 
       user={user}
       submit={(e)=>handleLogin(e)}
