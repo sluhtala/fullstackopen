@@ -11,11 +11,11 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async (event)=>{
+  const handleLogin = async (event) => {
     event.preventDefault();
     console.log('logging in...');
     try{
-      const userReturned = await loginService.login({username: username, password: password });
+      const userReturned = await loginService.login({ username: username, password: password });
       setUser(userReturned);
       sessionStorage.setItem('user-logged', JSON.stringify(userReturned));
       setUsername('');
@@ -24,7 +24,7 @@ const App = () => {
     catch (e){
       setNotification('Wrong username or password');
       setUseError(true);
-      setTimeout(()=>{
+      setTimeout(() => {
         setNotification(null);
         setUseError(false);
       },5000)
@@ -32,7 +32,7 @@ const App = () => {
   }
 
 
-  useEffect(()=>{
+  useEffect(() => {
     const sessionUser = sessionStorage.getItem('user-logged');
     if (sessionUser)
     {
@@ -46,18 +46,18 @@ const App = () => {
     <div>
       <Notification message={notification} error={useError}/>
       <Blogs
-      user={user}
-      setUser={(arg)=>{setUser(arg)}}
-      setNotification={(arg)=>setNotification(arg)}
-      setError={(arg)=>setUseError(arg)}
+        user = {user}
+        setUser = {(arg) => {setUser(arg)}}
+        setNotification = {(arg) => setNotification(arg)}
+        setError = {(arg) => setUseError(arg)}
       />
-      <LoginForm 
-      user={user}
-      submit={(e)=>handleLogin(e)}
-      username={username}
-      password={password}
-      setPassword={(a)=>setPassword(a)}
-      setUsername={(a)=>setUsername(a)}
+      <LoginForm
+        user={user}
+        submit={(e) => handleLogin(e)}
+        username={username}
+        password={password}
+        setPassword={(a) => setPassword(a)}
+        setUsername={(a) => setUsername(a)}
       />
     </div>
   )
