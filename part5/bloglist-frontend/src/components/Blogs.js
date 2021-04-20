@@ -2,6 +2,7 @@ import Blog from './Blog'
 import blogService from '../services/blogs'
 import React, { useState, useEffect, useRef } from 'react'
 import Togglable from './Togglable'
+import Form from './NewBlogForm'
 
 const LoggedStatus = ({ user, setUser }) => {
 
@@ -37,7 +38,6 @@ const CreateBlog = ({ user, setNotification, setError, blogs, setBlogs, hideForm
       author: author,
       url: url
     };
-    console.log(newPost);
     try{
       const response = await blogService.createNew(user, newPost)
       setTitle('');
@@ -64,24 +64,12 @@ const CreateBlog = ({ user, setNotification, setError, blogs, setBlogs, hideForm
   if (!user)
     return null;
   return (
-    <form onSubmit = { (e) => handleNewPost(e) }>
-      <div>
-        title:
-        <input value = {title} onChange = {({ target }) => setTitle(target.value)}></input>
-      </div>
-      <div>
-        author:
-        <input value = {author} onChange = {({ target }) => setAuthor(target.value)}></input>
-      </div>
-      <div>
-        url:
-        <input value = {url} onChange = {({ target }) => setUrl(target.value)}></input>
-      </div>
-      <div>
-        <input type = "submit" value = "create"></input>
-      </div>
-    </form>
-
+    <div className = 'form-div'>
+      <Form handleSubmit = {(e) => handleNewPost(e)}
+        title = {title} setTitle = {(t) => setTitle(t)}
+        author = {author} setAuthor = {(a) => setAuthor(a)}
+        url = {url} setUrl = {(u) => setUrl(u)}/>
+    </div>
   );
 }
 
@@ -162,15 +150,13 @@ const Blogs = ({ user, setUser, setNotification, setError }) => {
       setTimeout(() => {
         setError(false);
         setNotification(null);
-      },5000);
-    }
-
-  }
+      }, 5000);
+    }}
 
   if (!user)
     return (null);
   return (
-    <>
+    <div className= 'blogs'>
       <h2>blogs</h2>
       <LoggedStatus user = {user} setUser = {setUser}/>
       <Togglable buttonLabel = 'create new' ref = {formRef} cancelButton = {true}>
@@ -180,7 +166,8 @@ const Blogs = ({ user, setUser, setNotification, setError }) => {
           setError = {setError}
           blogs = {blogs}
           setBlogs = {(arg) => setBlogs(arg)}
-          hideForm = {() => formRef.current.toggleHidden()}/>
+          hideForm = {() => formRef.current.toggleHidden()}
+        />
       </Togglable>
       {blogs.map(blog =>
         <Blog
@@ -189,7 +176,7 @@ const Blogs = ({ user, setUser, setNotification, setError }) => {
           deleteBlog = {(blog) => deleteBlog(blog)}
           likeBlog = {(blog) => likeBlog(blog)}/>
       )}
-    </>
+    </div>
   );
 }
 

@@ -9,7 +9,7 @@ const FullBlog = ({ blog, hide, deleteBlog, likeBlog }) => {
   };
 
   return (
-    <div style={style}>
+    <div style={style} className = 'full-blog'>
       <div>
         {blog.title} {blog.author} {' '}
         <button onClick={hide}>hide</button>
@@ -17,7 +17,7 @@ const FullBlog = ({ blog, hide, deleteBlog, likeBlog }) => {
       <div><a href={blog.url}>{blog.url}</a></div>
       <div>
         {blog.likes} {' '}
-        <button onClick={() => likeBlog(blog)}>like</button>
+        <button onClick={() => likeBlog(blog)} className = 'like-button'>like</button>
       </div>
       <div>
         {blog.user.name}
@@ -32,7 +32,7 @@ const FullBlog = ({ blog, hide, deleteBlog, likeBlog }) => {
 const BlogBasic = ({ visible, blog }) => {
   if (!visible)
     return null;
-  return (<>{blog.title} {blog.author} {' '}</>)
+  return (<div className = 'blog-basic'>{blog.title} {blog.author} {' '}</div>)
 }
 
 const Blog = ({ blog, deleteBlog, likeBlog }) => {
@@ -40,7 +40,7 @@ const Blog = ({ blog, deleteBlog, likeBlog }) => {
   const [visible, setVisible] = useState(true);
 
   return (
-    <div>
+    <div className='blog'>
       <BlogBasic
         visible = {visible}
         blog = {blog}/>
