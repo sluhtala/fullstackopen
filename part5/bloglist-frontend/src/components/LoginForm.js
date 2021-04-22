@@ -10,13 +10,13 @@ const LoginForm = ({ user, submit, username, password, setUsername, setPassword 
       <form onSubmit={(e) => submit(e)}>
         <div>
           username
-          <input value={username} onChange={({ target }) => setUsername(target.value)}></input>
+          <input id = 'username-input' value={username} onChange={({ target }) => setUsername(target.value)}></input>
         </div>
         <div>
           password
-          <input value={password} onChange={({ target }) => setPassword(target.value)}></input>
+          <input id = 'password-input' value={password} onChange={({ target }) => setPassword(target.value)}></input>
         </div>
-        <input type='submit' value='login'></input>
+        <input id = 'login-button' type='submit' value='login'></input>
       </form>
     </div>
   )

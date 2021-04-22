@@ -15,7 +15,7 @@ const Form = (props) => (
       <input id = 'input-url' value = {props.url} onChange = {({ target }) => props.setUrl(target.value)}></input>
     </div>
     <div>
-      <input type = "submit" value = "create"></input>
+      <input id = 'create-button' type = "submit" value = "create"></input>
     </div>
   </form>
 );

@@ -8,8 +8,8 @@ const middleware = require('../utils/middleware');
 require('express-async-errors');
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({}).populate('user', {username: 1, name: 1});
-  response.json(blogs);
+    const blogs = await Blog.find({}).populate('user', {username: 1, name: 1});
+    response.status(200).json(blogs).end();
 })
 
 blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
@@ -20,13 +20,12 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
         return response.status(401).json({error: "token missing or invalid"});
     
     const user = request.user;
-
     const blog = new Blog({...request.body, user: user._id})
     const result = await blog.save();
 
     user.blogs = user.blogs.concat(result._id);
-    await user.save();
-    response.status(201).json(result);
+    await User.updateOne({id: user.id})
+    response.status(201).json(result).end();
 })
 
 blogsRouter.delete('/:id', middleware.userExtractor, async(req, res)=>{

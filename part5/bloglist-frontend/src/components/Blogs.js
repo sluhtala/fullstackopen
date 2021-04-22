@@ -130,14 +130,15 @@ const Blogs = ({ user, setUser, setNotification, setError }) => {
     if (!window.confirm(`Delete ${blog.title}?`))
       return ;
     try{
-      const response = await blogService.deletePost(user,blog.id);
-      console.log(response);
+      await blogService.deletePost(user,blog.id);
       let index = null;
       blogs.forEach((b, i) => {
         if (b.id === blog.id)
+        {
           index = i;
+        }
       })
-      if (index)
+      if (index !== null)
       {
         let blogsCpy = [...blogs];
         blogsCpy.splice(index, 1);
