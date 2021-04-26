@@ -1,12 +1,12 @@
 import React from 'react';
 import { setFilter } from '../reducers/filterReducer'
-import { useDispatch } from 'react-redux'
+import { useDispatch, connect } from 'react-redux'
 
-const Filter = ()=>{
-  const dispatch = useDispatch();
+const Filter = (props)=>{
+  //const dispatch = useDispatch();
 
-  const handleChangle = (event)=>{
-    dispatch(setFilter(event.target.value));
+  const handleChange = (event)=>{
+    props.setFilter(event.target.value);
   }
 
   const style = {
@@ -17,10 +17,14 @@ const Filter = ()=>{
   return (
     <div style={style}>
       <form onSubmit={(e)=>e.preventDefault()}>
-        <input type='text' placeholder='filter' onChange={handleChangle}/>
+        <input type='text' placeholder='filter' onChange={handleChange}/>
       </form>
     </div>
   )
 }
 
-export default Filter;
+const mapDispatchToProps = {
+  setFilter
+}
+
+export default connect(null, mapDispatchToProps)(Filter);

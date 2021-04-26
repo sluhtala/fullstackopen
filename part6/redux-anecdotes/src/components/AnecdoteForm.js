@@ -1,10 +1,10 @@
 import React from 'react';
 import { newAnecdote } from '../reducers/anecdoteReducer';
-import { useDispatch } from 'react-redux'
+import { useDispatch, connect } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
 
 const AnecodteForm = (props) => {
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
 
   /*
   const setNotification = (content) => {
@@ -19,10 +19,11 @@ const AnecodteForm = (props) => {
   const createNew = (event) => {
     event.preventDefault();
     const content = event.target.content.value;
-    dispatch(newAnecdote(content))
+    props.newAnecdote(content)
     event.target.content.value = '';
     //setNotification(content);
-    dispatch(setNotification(`You created ${content}`, 5000))
+    console.log(props);
+    props.setNotification(`You created ${content}`, 5000)
   }
 
   return (
@@ -36,4 +37,9 @@ const AnecodteForm = (props) => {
   );
 }
 
-export default AnecodteForm;
+const mapDispatchToProps = {
+  setNotification,
+  newAnecdote
+}
+
+export default connect(null ,mapDispatchToProps)(AnecodteForm);

@@ -1,6 +1,6 @@
-import { getByDisplayValue } from "@testing-library/dom";
+import { useSelector } from 'react-redux';
 
-const initialState = {text: 'hello', visible: false};
+const initialState = {text: 'hello', visible: false, timeOutId: null};
 
 const notificationReducer = (state = initialState, action) => {
   switch (action.type){
@@ -8,6 +8,8 @@ const notificationReducer = (state = initialState, action) => {
       const visibleState = {...state};
       visibleState.visible = true;
       visibleState.text = action.text;
+      clearTimeout(state.timeOutId)
+      visibleState.timeOutId = action.timeOutId;
       return visibleState;
     case 'HIDE':
       const hiddenState = {...state};
@@ -20,10 +22,10 @@ const notificationReducer = (state = initialState, action) => {
 
 export const setNotification = (text, time) =>{
   return (async (dispatch)=>{
-    dispatch({type: 'SHOW', text: text})
-    setTimeout(()=>{
+    const newTimeOutId = setTimeout(()=>{
       dispatch({type:'HIDE'})
     }, time)
+    dispatch({type: 'SHOW', text: text, timeOutId: newTimeOutId})
   })
 }
 
