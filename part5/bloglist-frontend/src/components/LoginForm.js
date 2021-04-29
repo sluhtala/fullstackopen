@@ -22,7 +22,7 @@ const LoginForm = ({ user, submit, username, password, setUsername, setPassword 
   )
 }
 
-LoginForm.prototype = {
+LoginForm.propType = {
   submit: PropTypes.func.isRequired,
   setUsername: PropTypes.func.isRequired,
   setPassword: PropTypes.func.isRequired,
