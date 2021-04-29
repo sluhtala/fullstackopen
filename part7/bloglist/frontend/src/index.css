@@ -1,0 +1,23 @@
+.notification{
+    color: green;
+    border: solid 4px green;
+    font-style: italic;
+    padding: 10px;
+    font-size: 30px;
+}
+
+.error{
+    color: red!important;
+    border-color: red!important;
+}
+
+button{
+    border-radius: 4px;
+    border: 1px black solid;
+    cursor: pointer
+}
+
+button:hover
+{
+  background-color: darkgrey;
+}
