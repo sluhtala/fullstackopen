@@ -1,22 +1,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { TextField, Button, Typography } from '@material-ui/core';
 
-const LoginForm = ({ user, submit, username, password, setUsername, setPassword }) => {
+const LoginForm = ({ submit, username, password, setUsername, setPassword }) => {
+  const user = useSelector(state=>state.loggedIn)
+
   if (user)
     return (null);
   return (
     <div>
-      <h2>login to application</h2>
+      <Typography variant="h3">Login to application</Typography>
       <form onSubmit={(e) => submit(e)}>
         <div>
-          username
-          <input id = 'username-input' value={username} onChange={({ target }) => setUsername(target.value)}></input>
+          <TextField className="standard-basic" label="username" value={username} onChange={({target})=>setUsername(target.value)} />
         </div>
         <div>
-          password
-          <input id = 'password-input' value={password} onChange={({ target }) => setPassword(target.value)}></input>
+          <TextField className="standard-basic" label="password" type="password" value={password} onChange={({target})=>setPassword(target.value)} />
         </div>
-        <input id = 'login-button' type='submit' value='login'></input>
+          <Button style={{margin:"10px 0 0 0"}} variant="outlined" id = 'login-button' type='submit' value='login'>login</Button>
       </form>
     </div>
   )

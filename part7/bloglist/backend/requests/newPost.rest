@@ -1,0 +1,11 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJ3aXRoYmxvZ3M0IiwiaWQiOiI2MDc3MDMwYTg2ZWQwZDIyMzIyNDMzZTMiLCJpYXQiOjE2MTg0MTUwMDh9.EtK2LKaa22qmP-TfJbQB6hEXua9mF3uV1Mv0eUdSQTE
+
+{
+    "title": "testtitle5",
+    "author": "testauthor3",
+    "url":"testurl3",
+    "likes":42,
+    "user":"6076fd3dfa9a0820911bcc2a"
+}

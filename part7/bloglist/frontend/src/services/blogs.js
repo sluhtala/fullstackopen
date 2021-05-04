@@ -29,7 +29,20 @@ const likePost = async (user, blog) => {
   return (request.data);
 }
 
+const getComments = async (blogId) => {
+  const url = `${baseUrl}/${blogId}/comments`;
+  const request = await axios.get(url);
+  return (request.data);
+}
+
+const addComment = async (user, blogId, comment) => {
+  const url = `${baseUrl}/${blogId}/comments`;
+  const data = {comment : comment};
+  const request = await axios.put(url, data, setAuthorization(user));
+  return request.data.comment;
+}
+
 const blogService = {
- getAll, createNew, deletePost, likePost 
+ getAll, createNew, deletePost, likePost, getComments, addComment
 }
 export default blogService;

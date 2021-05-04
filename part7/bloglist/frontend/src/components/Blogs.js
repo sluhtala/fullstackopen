@@ -4,34 +4,15 @@ import Togglable from './Togglable'
 import Form from './NewBlogForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs, addBlog, likeBlog, deleteBlog } from '../reducers/blogReducer'
+import { Route, Link, Switch } from 'react-router-dom'
+import { List, ListItem } from '@material-ui/core'
 
-const LoggedStatus = ({ user, setUser }) => {
-
-  const logOut = () =>
-  {
-    sessionStorage.removeItem('user-logged');
-    setUser(null);
-  }
-
-  if (!user)
-    return null;
-  return (
-    <div>
-      {user.name} logged in {' '}
-      <button
-        onClick = {() => {logOut()}}
-      >logout</button>
-      <br/>
-      <br/>
-    </div>
-  );
-}
-
-const CreateBlog = ({ user, hideForm, handleNotification }) => {
+const CreateBlog = ({  hideForm, handleNotification }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
   const dispatch = useDispatch();
+  const user = useSelector(state=>state.loggedIn);
 
   const  handleNewPost = async (event) => {
     event.preventDefault();
@@ -65,15 +46,17 @@ const CreateBlog = ({ user, hideForm, handleNotification }) => {
   );
 }
 
-const Blogs = ({ user, setUser, setNotification, setError, handleNotification }) => {
+const Blogs = ({ setNotification, setError, handleNotification }) => {
   //const [blogs, setBlogs] = useState([])
   const blogs = useSelector(state => state.blogs);
   const dispatch = useDispatch();
   const formRef = useRef(null);
+  const user = useSelector(state=>state.loggedIn)
 
   useEffect(() => {
     if(!user)
       return ;
+    console.log('blogs')
     dispatch(initializeBlogs())
   }, [user, dispatch])
 
@@ -101,26 +84,36 @@ const Blogs = ({ user, setUser, setNotification, setError, handleNotification })
   if (!user)
     return (null);
   return (
-    <div className= 'blogs'>
-      <h2>blogs</h2>
-      <LoggedStatus user = {user} setUser = {setUser}/>
-      <Togglable buttonLabel = 'create new' ref = {formRef} cancelButton = {true}>
-        <CreateBlog
-          user = {user}
-          setNotification = {setNotification}
-          setError = {setError}
-          blogs = {blogs}
-          hideForm = {() => formRef.current.toggleHidden()}
-          handleNotification = {handleNotification}
-        />
-      </Togglable>
-      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog
-          key = {blog.id}
-          blog = {blog}
-          handleDeleteBlog = {(blog) => handleDeleteBlog(blog)}
-          handleLikeBlog = {(blog) => handleLikeBlog(blog)}/>
-      )}
+    <div className = 'blogs' style={{margin:"10px 0 0 0"}}>
+        <Switch>
+          <Route path = '/blogs/:id'>
+            <Blog blogs = {blogs}
+              handleDeleteBlog = {handleDeleteBlog}
+              handleLikeBlog = {handleLikeBlog}
+            />
+          </Route>
+          <Route path = '/'>
+          <Togglable buttonLabel = 'create new' ref = {formRef} cancelButton = {true}>
+            <CreateBlog
+              user = {user}
+              setNotification = {setNotification}
+              setError = {setError}
+              blogs = {blogs}
+              hideForm = {() => formRef.current.toggleHidden()}
+              handleNotification = {handleNotification}
+          />
+        </Togglable>
+          <div>
+            <List>
+            {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+              <div key={blog.id}>
+               <Link to={`/blogs/${blog.id}`} style={{textDecoration:"none"}}><ListItem button alignItems="center">{blog.title}</ListItem></Link>
+              </div>
+            )}
+            </List>
+          </div>
+          </Route>
+        </Switch>
     </div>
   );
 }
