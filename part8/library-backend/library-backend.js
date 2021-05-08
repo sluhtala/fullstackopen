@@ -7,11 +7,12 @@ const User = require('./models/user');
 const { books, authors } = require('./testData');
 const jwt = require('jsonwebtoken');
 const { PubSub } = require('apollo-server');
+require('dotenv').config()
 
-const mongoURL = 'mongodb+srv://sluhtala:yg6EegbWFea2AGm@cluster0.6ernc.mongodb.net/library?retryWrites=true&w=majority';
-const JWT_SECRET = 'myveryownspecialsecret'
+const MONGODB_URI = process.env.MONGODB_URI;
+const JWT_SECRET = process.env.JWT_SECRET;
 
-mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 .then(()=>{console.log('connected to mongodb')})
 .catch((error)=>{console.log(`error connecting to mongodb: ${error}`)})
 
