@@ -1,4 +1,4 @@
-import { newPatientEntry, gender as Gender } from "./src/types";
+import { newPatientEntry, gender as Gender } from "./types";
 
 type ruleType = (value: unknown) => boolean;
 
