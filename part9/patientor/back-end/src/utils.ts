@@ -65,6 +65,7 @@ export const toNewPatientEntry = ({
             (val) => isString(val),
             "incorrect or missing sosial security number"
         ),
+        entries: [],
     };
     return newEntry;
 };

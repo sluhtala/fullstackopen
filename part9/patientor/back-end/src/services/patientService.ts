@@ -3,7 +3,7 @@ import {
     nonSensitivePatientsEntry,
     newPatientEntry,
 } from "../types";
-import patientsData from "../../data/patients.json";
+import patientsData from "../data/patients.json";
 import { v1 as uuid } from "uuid";
 
 const patients: Array<patientsEntry> = patientsData as Array<patientsEntry>;
@@ -36,4 +36,13 @@ const addPatient = (entry: newPatientEntry): patientsEntry => {
     return newPatient;
 };
 
-export default { getEntries, getNonSensitiveEntries, addPatient };
+const findPatient = (id: string): patientsEntry => {
+    const result = patients.find((p) => p.id === id);
+    let patient: patientsEntry;
+    if (!result) throw new Error(`no patients with this id: ${id}`);
+    if (!result.entries) patient = { ...result, entries: [] };
+    else patient = result;
+    return patient;
+};
+
+export default { getEntries, getNonSensitiveEntries, addPatient, findPatient };

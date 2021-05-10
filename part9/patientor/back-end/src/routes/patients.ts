@@ -16,8 +16,18 @@ router.post("/", (req, res) => {
     } catch (e) {
         if (e instanceof Error) {
             console.log(e.message);
-            res.status(402).send({ error: e.message });
+            res.status(400).send({ error: e.message });
         }
+    }
+});
+
+router.get("/:id", (req, res) => {
+    const id: string = req.params.id;
+    try {
+        const patient = patientsService.findPatient(id);
+        res.status(200).json(patient);
+    } catch (e) {
+        if (e instanceof Error) res.status(400).send({ error: e.message });
     }
 });
 
