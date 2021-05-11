@@ -1,4 +1,6 @@
-import { newPatientEntry, gender as Gender } from "./types";
+import { newPatientEntry, Gender, Entry } from "./types";
+import { v1 as uuid } from "uuid";
+import { diagnosesEntry as Diagnosis } from "./types";
 
 type ruleType = (value: unknown) => boolean;
 
@@ -17,7 +19,6 @@ const isDate = (value: string): boolean => {
 };
 
 const parser = <T>(value: unknown, rule: ruleType, error: string): T => {
-    if (!value) throw new Error(error);
     if (!rule(value)) {
         throw new Error(error);
     }
@@ -68,4 +69,87 @@ export const toNewPatientEntry = ({
         entries: [],
     };
     return newEntry;
+};
+
+type EntryFields = {
+    date: string;
+    specialist: string;
+    description: string;
+    diagnosisCodes?: Array<Diagnosis["code"]>;
+    type: "Hospital" | "HealthCheck" | "OccupationalHealthcare";
+    healthCheckRating: number;
+    discharge: { date: string; criteria: string };
+    employerName: string;
+    sickLeave: { startDate: string; endDate: string };
+};
+
+export const toNewEntry = ({
+    date,
+    specialist,
+    description,
+    type,
+    diagnosisCodes,
+    discharge,
+    sickLeave,
+    healthCheckRating,
+    employerName,
+}: EntryFields): Entry => {
+    const newEntryBase = {
+        id: uuid(),
+        date: parser<string>(
+            date,
+            (val) => isString(val),
+            "incorrect or missing date"
+        ),
+        specialist: parser<string>(
+            specialist,
+            (val) => isString(val),
+            "incorrect or missing specialist"
+        ),
+        description: parser<string>(
+            description,
+            (val) => isString(val),
+            "incorrect or missing description"
+        ),
+        diagnosisCodes: diagnosisCodes,
+    };
+    let newEntry: Entry;
+    switch (type) {
+        case "Hospital":
+            newEntry = {
+                ...newEntryBase,
+                type: parser<"Hospital">(
+                    type,
+                    (val) => isString(val),
+                    "incorrect or missing type"
+                ),
+                discharge: discharge,
+            };
+            return newEntry;
+        case "OccupationalHealthcare":
+            newEntry = {
+                type: parser<"OccupationalHealthcare">(
+                    type,
+                    (val) => isString(val),
+                    "incorrect or missing type"
+                ),
+                ...newEntryBase,
+                sickLeave: sickLeave,
+                employerName: employerName,
+            };
+            return newEntry;
+        case "HealthCheck":
+            newEntry = {
+                type: parser<"HealthCheck">(
+                    type,
+                    (val) => isString(val),
+                    "incorrect or missing type"
+                ),
+                ...newEntryBase,
+                healthCheckRating: healthCheckRating,
+            };
+            return newEntry;
+        default:
+            throw new Error(`error never: ${JSON.stringify(newEntryBase)}`);
+    }
 };

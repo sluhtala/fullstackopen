@@ -1,5 +1,6 @@
 import express from "express";
 import patientsService from "../services/patientService";
+import { toNewPatientEntry, toNewEntry } from "../utils";
 
 const router = express.Router();
 
@@ -11,7 +12,8 @@ router.get("/", (_req, res) => {
 
 router.post("/", (req, res) => {
     try {
-        const newPatientEntry = patientsService.addPatient(req.body);
+        const newPatient = toNewPatientEntry(req.body);
+        const newPatientEntry = patientsService.addPatient(newPatient);
         res.status(201).json(newPatientEntry);
     } catch (e) {
         if (e instanceof Error) {
@@ -26,6 +28,18 @@ router.get("/:id", (req, res) => {
     try {
         const patient = patientsService.findPatient(id);
         res.status(200).json(patient);
+    } catch (e) {
+        if (e instanceof Error) res.status(400).send({ error: e.message });
+    }
+});
+
+router.post("/:id/entries", (req, res) => {
+    const id = req.params.id;
+    console.log("trying to add new entry..");
+    try {
+        const newEntry = toNewEntry(req.body);
+        const entry = patientsService.addEntry(newEntry, id);
+        res.status(200).json(entry);
     } catch (e) {
         if (e instanceof Error) res.status(400).send({ error: e.message });
     }

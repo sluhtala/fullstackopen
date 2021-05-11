@@ -1,14 +1,15 @@
 import {
-    patientsEntry,
+    Patient,
     nonSensitivePatientsEntry,
     newPatientEntry,
+    Entry,
 } from "../types";
-import patientsData from "../data/patients.json";
+import patientsData from "../data/patients";
 import { v1 as uuid } from "uuid";
 
-const patients: Array<patientsEntry> = patientsData as Array<patientsEntry>;
+const patients: Array<Patient> = patientsData as Array<Patient>;
 
-const getEntries = (): patientsEntry[] => {
+const getEntries = (): Patient[] => {
     return patients;
 };
 
@@ -27,7 +28,7 @@ const createNewId = (): string => {
     return id;
 };
 
-const addPatient = (entry: newPatientEntry): patientsEntry => {
+const addPatient = (entry: newPatientEntry): Patient => {
     const newPatient = {
         ...entry,
         id: createNewId(),
@@ -36,13 +37,24 @@ const addPatient = (entry: newPatientEntry): patientsEntry => {
     return newPatient;
 };
 
-const findPatient = (id: string): patientsEntry => {
+const findPatient = (id: string): Patient => {
     const result = patients.find((p) => p.id === id);
-    let patient: patientsEntry;
+    let patient: Patient;
     if (!result) throw new Error(`no patients with this id: ${id}`);
-    if (!result.entries) patient = { ...result, entries: [] };
-    else patient = result;
+    patient = result;
     return patient;
 };
 
-export default { getEntries, getNonSensitiveEntries, addPatient, findPatient };
+const addEntry = (entry: Entry, id: string): Entry => {
+    const patient = findPatient(id);
+    patient.entries.push(entry);
+    return entry;
+};
+
+export default {
+    getEntries,
+    getNonSensitiveEntries,
+    addPatient,
+    findPatient,
+    addEntry,
+};
