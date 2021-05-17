@@ -1,0 +1,6 @@
+[submodule "part11/full-stack-open-pokedex"]
+	path = part11/full-stack-open-pokedex
+	url = git@github.com:sluhtala/full-stack-open-pokedex.git
+[submodule "part3/phonebook_backend"]
+	path = part3/phonebook_backend
+	url = git@github.com:sluhtala/fullstackopen-part3.git
